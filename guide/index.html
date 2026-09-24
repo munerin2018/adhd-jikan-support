@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>個人アプリの Google Play 公開ハンドブック</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+  :root{
+    --bg:#f2f4f6; --panel:#ffffff; --ink:#172031; --sub:#4a5568; --faint:#8491a3;
+    --line:#dde3ea; --accent:#177d68; --accent-ink:#ffffff; --accent-soft:#e0f2ec;
+    --warn:#9a5b06; --warn-soft:#fbefd9; --bad:#b3261e; --bad-soft:#fbe4e2;
+    --code-bg:#eef1f5; --seg-off:#d9e0e8;
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#10161f; --panel:#17202c; --ink:#e7ecf2; --sub:#b1bccb; --faint:#7a879a;
+      --line:#263244; --accent:#50e3c2; --accent-ink:#0d1a1e; --accent-soft:#15302b;
+      --warn:#f0b35a; --warn-soft:#32271a; --bad:#ff8a80; --bad-soft:#3a1f1d;
+      --code-bg:#0e151f; --seg-off:#243043;
+      color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#10161f; --panel:#17202c; --ink:#e7ecf2; --sub:#b1bccb; --faint:#7a879a;
+    --line:#263244; --accent:#50e3c2; --accent-ink:#0d1a1e; --accent-soft:#15302b;
+    --warn:#f0b35a; --warn-soft:#32271a; --bad:#ff8a80; --bad-soft:#3a1f1d;
+    --code-bg:#0e151f; --seg-off:#243043;
+    color-scheme:dark;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--bg);color:var(--ink);font-family:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",sans-serif;font-size:15.5px;line-height:1.8}
+  .layout{max-width:1120px;margin:0 auto;padding-inline:16px;padding-block:28px 80px;display:grid;grid-template-columns:230px 1fr;gap:36px}
+  @media (max-width:880px){ .layout{grid-template-columns:1fr} nav.toc{position:static!important;max-height:none!important} }
+  a{color:var(--accent)}
+  code,.mono{font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;font-size:.86em}
+  code{background:var(--code-bg);padding:1px 6px;border-radius:5px;word-break:break-all}
+
+  /* 目次 */
+  nav.toc{position:sticky;top:20px;align-self:start;max-height:calc(100vh - 40px);overflow:auto;font-size:14px}
+  nav.toc .brand{font-weight:900;font-size:15px;margin-bottom:12px;display:block}
+  nav.toc ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+  nav.toc a{display:block;padding:5px 10px;border-radius:8px;color:var(--sub);text-decoration:none}
+  nav.toc a:hover{background:var(--panel);color:var(--ink)}
+  nav.toc .n{font-family:"JetBrains Mono",monospace;color:var(--faint);font-size:12px;margin-right:6px}
+
+  main{min-width:0;display:flex;flex-direction:column;gap:44px}
+  header .kicker{font-size:12px;letter-spacing:.12em;color:var(--accent);font-weight:700}
+  h1{font-size:clamp(28px,5vw,40px);line-height:1.25;margin:8px 0 12px;font-weight:900;text-wrap:balance}
+  .lead{color:var(--sub);margin:0;max-width:62ch}
+  h2{font-size:23px;margin:0 0 6px;font-weight:900;text-wrap:balance;display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+  h2 .n{font-family:"JetBrains Mono",monospace;font-size:14px;color:var(--accent);font-weight:500}
+  h3{font-size:17px;margin:22px 0 8px}
+  section > .desc{color:var(--sub);margin:0 0 16px;max-width:66ch}
+  p{margin:0 0 10px}
+
+  /* 進み具合 */
+  .track{list-style:none;margin:20px 0 0;padding:0;display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+  .track li{display:flex;flex-direction:column;gap:6px;font-size:12px;line-height:1.4;color:var(--faint)}
+  .track .bar{height:7px;border-radius:4px;background:var(--seg-off)}
+  .track li.done{color:var(--sub)} .track li.done .bar{background:var(--accent)}
+  .track li.now{color:var(--ink);font-weight:700}
+  .track li.now .bar{background:repeating-linear-gradient(90deg,var(--accent) 0 8px,transparent 8px 12px)}
+  @media (max-width:600px){ .track{grid-template-columns:repeat(3,1fr);row-gap:12px} }
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+  .callout{border-radius:12px;padding:12px 16px;font-size:14.5px}
+  .callout.warn{background:var(--warn-soft)} .callout.warn b{color:var(--warn)}
+  .callout.bad{background:var(--bad-soft)} .callout.bad b{color:var(--bad)}
+  .callout.ok{background:var(--accent-soft)} .callout.ok b{color:var(--accent)}
+  .stack{display:flex;flex-direction:column;gap:12px}
+
+  /* 手順(チェック付き) */
+  ol.steps{list-style:none;margin:0;padding:0;border:1px solid var(--line);border-radius:14px;background:var(--panel);overflow:hidden}
+  ol.steps > li{display:grid;grid-template-columns:26px 1fr;gap:12px;padding:14px 18px;border-top:1px solid var(--line)}
+  ol.steps > li:first-child{border-top:none}
+  ol.steps input[type=checkbox]{width:19px;height:19px;margin:3px 0 0;accent-color:var(--accent);cursor:pointer}
+  ol.steps .t{font-weight:700}
+  ol.steps .b{color:var(--sub);font-size:14.5px}
+  ol.steps .b ul,ol.steps .b ol{margin:4px 0 0;padding-left:1.3em}
+  ol.steps li.checked .t{color:var(--faint);text-decoration:line-through}
+
+  /* コピー欄 */
+  .copy{display:flex;gap:8px;align-items:stretch;margin:6px 0}
+  .copy .val{flex:1;min-width:0;background:var(--code-bg);border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-family:"JetBrains Mono",ui-monospace,monospace;font-size:13px;white-space:pre-wrap;word-break:break-all;color:var(--ink);line-height:1.6}
+  .copy .val.jp{font-family:"Zen Kaku Gothic New",sans-serif;font-size:14px}
+  .copy button{flex:none;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:0 12px;font:inherit;font-size:13px;cursor:pointer}
+  .copy button:hover{border-color:var(--accent);color:var(--accent)}
+  .copy button.ok{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+  button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  /* 表 */
+  .tbl{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:var(--code-bg);font-weight:700;white-space:nowrap}
+  tr:last-child td{border-bottom:none}
+  td.k{white-space:nowrap;color:var(--sub)}
+
+  /* 経緯 */
+  .timeline{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+  .timeline li{display:grid;grid-template-columns:92px 1fr;gap:14px;padding:10px 0;border-bottom:1px dashed var(--line)}
+  .timeline li:last-child{border-bottom:none}
+  .timeline .d{font-family:"JetBrains Mono",monospace;font-size:12.5px;color:var(--faint);padding-top:3px}
+  .timeline b{display:block}
+  .timeline span{color:var(--sub);font-size:14.5px}
+
+  details.faq{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:0 16px}
+  details.faq + details.faq{margin-top:8px}
+  details.faq summary{cursor:pointer;padding:12px 0;font-weight:700}
+  details.faq > div{padding:0 0 14px;color:var(--sub);font-size:14.5px}
+
+  footer{color:var(--faint);font-size:12.5px;border-top:1px solid var(--line);padding-top:16px}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<nav class="toc" aria-label="目次">
+  <span class="brand">Play 公開ハンドブック</span>
+  <ol>
+    <li><a href="#now"><span class="n">00</span>現在地</a></li>
+    <li><a href="#history"><span class="n">01</span>これまでの経緯</a></li>
+    <li><a href="#values"><span class="n">02</span>大事な情報の一覧</a></li>
+    <li><a href="#upload"><span class="n">03</span>新しい版を出す</a></li>
+    <li><a href="#phone"><span class="n">04</span>スマホを Play 版に</a></li>
+    <li><a href="#closed"><span class="n">05</span>クローズドテスト</a></li>
+    <li><a href="#prod"><span class="n">06</span>製品版を申請</a></li>
+    <li><a href="#oauth"><span class="n">07</span>Google ログインの一般公開</a></li>
+    <li><a href="#update"><span class="n">08</span>今後のアップデート</a></li>
+    <li><a href="#trouble"><span class="n">09</span>困ったとき</a></li>
+  </ol>
+</nav>
+
+<main>
+  <header id="now">
+    <span class="kicker">ADHD時間管理 / GOOGLE PLAY</span>
+    <h1>個人アプリを Google Play で公開する</h1>
+    <p class="lead">Flutter で作った Android アプリ「ADHD時間管理」を、個人のデベロッパー アカウントで Google Play に出すまでの記録と手順です。つまずいたところと直し方も含めて残しました。〈 〉で囲んだ部分は、自分の値に置き換えて読んでください。チェックを入れた項目は、このブラウザに保存されます。</p>
+    <ol class="track" aria-label="全体の進み具合">
+      <li class="done"><span class="bar"></span>アプリの準備</li>
+      <li class="done"><span class="bar"></span>Google Cloud</li>
+      <li class="done"><span class="bar"></span>Play の設定</li>
+      <li class="now"><span class="bar"></span>内部テスト v2</li>
+      <li><span class="bar"></span>クローズドテスト<br>12人×14日</li>
+      <li><span class="bar"></span>製品版公開</li>
+    </ol>
+    <div class="callout ok" style="margin-top:18px"><b>2026年9月時点の記録:</b>内部テストでバージョン1を公開し、Google ログインを直したバージョン2を出すところまで進みました。この先(クローズドテスト・製品版)の手順も、公式の要件をもとに書いています。</div>
+  </header>
+
+  <!-- 01 経緯 -->
+  <section id="history">
+    <h2><span class="n">01</span>これまでの経緯</h2>
+    <p class="desc">何をなぜ変えたのかの記録です。同じところでつまずかないための参考にしてください。</p>
+    <div class="card">
+      <ol class="timeline">
+        <li><span class="d">9/23</span><div><b>全ファイルアクセス権限を削除</b><span>Obsidian 連携が使っていた「すべてのファイルへのアクセス」は、Play の審査でほぼ却下される権限です。選んだフォルダだけを読み書きする方式(SAF)に作り直しました。</span></div></li>
+        <li><span class="d">9/23</span><div><b>アイコンを作成</b><span>デジタル時計風(上が時・下が分)。Android のアイコンは静止画しか使えないため、時刻は 10:08 で固定です。生成用のプログラムは <code>tool/make_icon.py</code>。</span></div></li>
+        <li><span class="d">9/23</span><div><b>Google Cloud で OAuth を登録</b><span>プロジェクト「ADHD Time Management」を作り、Calendar API の有効化、同意画面、テストユーザー、カレンダー読み書きの権限を設定しました。</span></div></li>
+        <li><span class="d">9/24</span><div><b>横画面のアラーム画面を修正</b><span>横向きだと「スヌーズ」「確認しました」のボタンが画面の外にはみ出していました。横向き専用の配置を追加し、実機で確認済みです。</span></div></li>
+        <li><span class="d">9/24</span><div><b>サポートサイトを公開</b><span>claude.ai のページは Google のチェックから見えず 403 エラーになったため、GitHub Pages に移しました。問い合わせ先は、個人用とは別に用意した公開用のメールアドレスにそろえました。</span></div></li>
+        <li><span class="d">9/24</span><div><b>パッケージ名を <code>adhd.time.management</code> に確定</b><span>Play 側で先にこの名前で登録されていたため、アプリ側を合わせました。この名前は二度と変えられません。</span></div></li>
+        <li><span class="d">9/24</span><div><b>内部テストでバージョン1を公開</b><span>Play からスマホへのインストールまで確認済みです。</span></div></li>
+        <li><span class="d">9/24</span><div><b>Google ログインを修正(バージョン2)</b><span>Android でも「ウェブ用クライアント ID」が必要だったため追加しました。Play 署名用の Android クライアントも追加し、実機でログインとカレンダーの読み取りまで確認済みです。</span></div></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 02 値 -->
+  <section id="values">
+    <h2><span class="n">02</span>大事な情報の一覧</h2>
+    <p class="desc">公開作業では、同じ値を何度も入力します。最初に一覧を作っておくと楽です。〈 〉の部分は自分の値に置き換えてください。クライアント ID や SHA-1 は秘密の値ではありませんが、署名鍵のパスワードは絶対に書き残さないでください。</p>
+
+    <h3>アプリ</h3>
+    <div class="tbl"><table>
+      <tr><td class="k">アプリ名</td><td>ADHD時間管理</td></tr>
+      <tr><td class="k">パッケージ名</td><td><div class="copy"><div class="val">adhd.time.management</div><button type="button">コピー</button></div></td></tr>
+      <tr><td class="k">現在のバージョン</td><td><code>1.0.1+2</code>(1.0.1 が表示用、2 が内部の通し番号)</td></tr>
+      <tr><td class="k">カテゴリ</td><td>仕事効率化</td></tr>
+      <tr><td class="k">公開用メール</td><td>〈公開用のメールアドレス〉<br>ストアや問い合わせ先に表示されます。個人用とは別のアドレスを用意するのがおすすめです。</td></tr>
+    </table></div>
+
+    <h3>ウェブページ(公開中)</h3>
+    <div class="tbl"><table>
+      <tr><td class="k">サイト</td><td><code>https://〈GitHubユーザー名〉.github.io/〈リポジトリ名〉/</code></td></tr>
+      <tr><td class="k">プライバシーポリシー</td><td><code>https://〈GitHubユーザー名〉.github.io/〈リポジトリ名〉/privacy-policy.html</code></td></tr>
+      <tr><td class="k">アカウント・データ削除</td><td><code>https://〈GitHubユーザー名〉.github.io/〈リポジトリ名〉/account-deletion.html</code></td></tr>
+      <tr><td class="k">中身の編集</td><td>公開リポジトリのファイルを直すと、数分で反映されます。</td></tr>
+    </table></div>
+
+    <h3>Google Cloud(Google ログイン用)</h3>
+    <div class="tbl"><table>
+      <tr><td class="k">プロジェクト</td><td>〈プロジェクト名〉(プロジェクト名は英数字のみ。日本語は使えません)</td></tr>
+      <tr><td class="k">クライアント一覧</td><td>Google Cloud →「Google Auth Platform」→「クライアント」。ブラウザに複数の Google アカウントがあると別のアカウントで開かれることがあるので、URL の <code>authuser=</code> の番号で切り替えます。</td></tr>
+      <tr><td class="k">Android クライアント ①</td><td>手元でビルドした版用。SHA-1 はアップロード鍵のもの(<code>keytool -list -v -keystore 〈鍵ファイル〉</code> で確認)</td></tr>
+      <tr><td class="k">Android クライアント ②</td><td>Play から入れた版用。SHA-1 は Play が付ける署名のもの(Play Console →「アプリの完全性」→「アプリの署名」の「アプリ署名鍵の証明書」)</td></tr>
+      <tr><td class="k">ウェブ クライアント</td><td>種類「ウェブ アプリケーション」で作り、そのクライアント ID をアプリの <code>GoogleSignIn.instance.initialize(serverClientId: …)</code> に書きます。google_sign_in 7系では Android でも必須です</td></tr>
+      <tr><td class="k">公開ステータス</td><td>テスト中(テストユーザーに登録した人だけがログインできます。最大100人)</td></tr>
+    </table></div>
+
+    <h3>Play Console</h3>
+    <div class="tbl"><table>
+      <tr><td class="k">管理画面</td><td><a href="https://play.google.com/console" target="_blank" rel="noopener">play.google.com/console</a></td></tr>
+      <tr><td class="k">内部テストの参加リンク</td><td>「内部テスト」→「テスター」タブの「リンクをコピー」で取得。ページが開けないときは、Chrome のアカウントがテスターに登録したものと同じか確認してください。</td></tr>
+    </table></div>
+
+    <h3>パソコンの中のファイル</h3>
+    <div class="tbl"><table>
+      <tr><th>もの</th><th>場所(Flutter プロジェクトのフォルダから)</th></tr>
+      <tr><td>アップロードするファイル(AAB)</td><td><code>store_assets\release\</code></td></tr>
+      <tr><td>ストア用スクリーンショット 5枚</td><td><code>store_assets\screenshots\</code>(1350×2400、9:16)</td></tr>
+      <tr><td>アイコン 512×512</td><td><code>store_assets\icon_512.png</code></td></tr>
+      <tr><td>フィーチャー グラフィック</td><td><code>store_assets\feature_graphic.png</code></td></tr>
+      <tr><td>説明文・申告の回答例</td><td><code>store_assets\store_listing.md</code></td></tr>
+      <tr><td><b>署名鍵(最重要)</b></td><td><code>android\app\upload-keystore.jks</code> と <code>android\key.properties</code>(パスワード入り)</td></tr>
+    </table></div>
+    <div class="callout bad" style="margin-top:12px"><b>署名鍵は必ずバックアップしてください。</b>この2つのファイルをなくすと、アプリを更新できなくなります(Google に鍵の再発行を申請すれば復旧できますが、数日かかります)。USB メモリなど、ネットに上がらない場所にコピーを保存してください。GitHub や公開の場所には絶対に置かないでください。</div>
+  </section>
+
+  <!-- 03 v2 -->
+  <section id="upload">
+    <h2><span class="n">03</span>新しい版(バージョン2)を出す</h2>
+    <p class="desc">Google ログインの修正は手元のファイルに入っているだけで、Play にはまだ届いていません。所要時間は5分ほどです。</p>
+    <ol class="steps" data-group="upload">
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">内部テストの画面を開く</div><div class="b">Play Console →「ADHD時間管理」→ 左メニュー「テストとリリース」→「テスト」→「内部テスト」</div></div></li>
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">「新しいリリースを作成」を押す</div><div class="b">右上の青いボタンです。</div></div></li>
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">AAB をドラッグ&ドロップ</div><div class="b">ビルドした <code>app-release.aab</code> を入れます。表の中に新しいバージョン(例:「2 (1.0.1)」)が出れば成功です。</div></div></li>
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">リリースノートを書く</div><div class="b">欄の中身を全部消して、次を貼り付けます。<div class="copy"><div class="val jp">&lt;ja-JP&gt;
+Googleログインの不具合を修正
+&lt;/ja-JP&gt;</div><button type="button">コピー</button></div></div></div></li>
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">「次へ」→「保存して公開」</div><div class="b">黄色の警告は無視して大丈夫です。赤いエラーが出たら <a href="#trouble">09</a> を見てください。「内部テスターに公開」と表示されたら完了です。</div></div></li>
+    </ol>
+  </section>
+
+  <!-- 04 スマホ -->
+  <section id="phone">
+    <h2><span class="n">04</span>スマホを Play 版に入れ替える</h2>
+    <p class="desc">今スマホに入っているのは、確認のためにパソコンから直接入れた版です。署名が Play 版と違うので、このままだと Play からの更新が失敗します。</p>
+    <ol class="steps" data-group="phone">
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">必要ならバックアップを取る</div><div class="b">アプリの「設定」→「バックアップ」→「エクスポート」。予定を入れていなければ不要です。</div></div></li>
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">「ADHD時間管理」をアンインストール</div><div class="b">同じアイコンが複数ある場合は、テスト中に入れた古い版もまとめて消して大丈夫です(古い版の中の予定も消えます)。</div></div></li>
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">Play ストアから入れ直す</div><div class="b">内部テストの参加リンク(<a href="#values">02</a>)をスマホで開く →「Google Play でダウンロード」。バージョン2の公開直後は、反映まで数分〜1時間ほどかかることがあります。</div></div></li>
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">権限を許可して Google ログインを試す</div><div class="b">初回に通知・アラームの許可を求められます。「設定」→「Googleカレンダー連携」→「Googleアカウントでログイン」。「Google で確認されていません」と出たら「続行」で進みます(テスト中の正常な表示です)。</div></div></li>
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">必要ならバックアップを戻す</div><div class="b">「設定」→「バックアップ」→「インポート」。</div></div></li>
+    </ol>
+  </section>
+
+  <!-- 05 クローズドテスト -->
+  <section id="closed">
+    <h2><span class="n">05</span>クローズドテスト(12人以上・14日間)</h2>
+    <p class="desc">2023年11月以降に作った個人のデベロッパー アカウントは、製品版の前に「12人以上のテスターが、14日間続けて参加した」クローズドテストが必要です。一番時間がかかる工程なので、早めに始めてください。</p>
+
+    <h3>準備:テスター用の Google グループを作る</h3>
+    <ol class="steps" data-group="group">
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">Google グループを作る</div><div class="b"><a href="https://groups.google.com/my-groups" target="_blank" rel="noopener">groups.google.com</a> →「グループを作成」。名前の例:<code>adhd-jikan-testers</code>。「グループに参加できるユーザー」は「ウェブ上の誰でも参加をリクエストできる」か「招待されたユーザーのみ」。メンバーの一覧は「グループのメンバー」に限定して、テスター同士のメールアドレスが見えないようにします。</div></div></li>
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">テスターを集める(12人以上。余裕をみて15人ほど)</div><div class="b">家族・友人・SNS で募集します。<b>途中で抜ける人が出ると14日が数え直しになる</b>ことがあるので、多めに集めてください。テスターの Google アカウントのアドレスを聞いて、グループに追加します。</div></div></li>
+    </ol>
+
+    <h3>Play Console でクローズドテストを作る</h3>
+    <ol class="steps" data-group="closed">
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">トラックを開く</div><div class="b">「テストとリリース」→「テスト」→「クローズド テスト」→ 最初からある「Alpha」トラックの「管理」(無ければ「トラックを作成」)。</div></div></li>
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">国と地域を選ぶ</div><div class="b">「国 / 地域」タブ →「国 / 地域を追加」→「日本」にチェック → 保存。</div></div></li>
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">テスターを登録する</div><div class="b">「テスター」タブ →「Google グループ」を選び、グループのアドレス(例:<code>adhd-jikan-testers@googlegroups.com</code>)を入れて保存。「フィードバック用 URL またはメールアドレス」には公開用のメールアドレス。</div></div></li>
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">リリースを作る</div><div class="b">「リリース」タブ →「新しいリリースを作成」→「ライブラリから追加」で、内部テストに出したのと同じ AAB(2 (1.0.1))を選ぶ → リリースノート →「次へ」→「保存して公開」。</div></div></li>
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">Google の審査を待つ</div><div class="b">クローズドテストは初回に審査があります(数時間〜数日)。「公開の概要」で状態を確認できます。通ると「テスター」タブに参加用リンクが出ます。</div></div></li>
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">テスターに案内を送る</div><div class="b">下の文をコピーして、参加用リンクを入れて送ります。<div class="copy"><div class="val jp">ADHD時間管理(アラーム・タイマー・予定管理のアプリ)のテストに協力してもらえませんか?
+
+1. このリンクを開いて「テスターになる」を押す:
+   (ここに参加用リンク)
+2. 同じページの「Google Play でダウンロード」からインストール
+3. 14日間はアンインストールしないでください(ときどき開いてもらえると助かります)
+
+気づいたことがあれば、Play ストアのアプリページの「フィードバック」か、〈公開用のメールアドレス〉まで。</div><button type="button">コピー</button></div></div></div></li>
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">14日間待つ</div><div class="b">ダッシュボードに「クローズド テストの進捗」が出ます。人数と日数の条件を満たすと、製品版の申請ができるようになります。</div></div></li>
+    </ol>
+    <div class="callout warn" style="margin-top:12px"><b>テスターにも Google ログインを試してもらう場合:</b>Google Cloud の「Google Auth Platform」→「対象」→「テストユーザー」に、その人のアドレスを追加してください(最大100人)。追加しないと、その人はログインできません。iCal 方式(方法1)なら登録なしで使えます。</div>
+  </section>
+
+  <!-- 06 製品版 -->
+  <section id="prod">
+    <h2><span class="n">06</span>製品版を申請して公開する</h2>
+    <ol class="steps" data-group="prod">
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">製品版へのアクセスを申請する</div><div class="b">ダッシュボードの「製品版へのアクセスを申請」。テストの内容、テスターからのフィードバック、それを受けて直したことなどのアンケートに答えます。正直に、具体的に書いてください(例:「横画面でボタンが押せない不具合を直した」)。審査は数日〜1週間ほどです。</div></div></li>
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">製品版のリリースを作る</div><div class="b">承認されたら「テストとリリース」→「製品版」→「国 / 地域」で日本を追加 →「新しいリリースを作成」→ ライブラリから AAB を追加 → リリースノート →「次へ」。</div></div></li>
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">審査に送信する</div><div class="b">「公開の概要」で「審査に送信」。数時間〜数日で審査が終わり、通れば Google Play で誰でもダウンロードできるようになります。</div></div></li>
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">サイトの表示を「公開中」に変える</div><div class="b">サイトのトップにある「Google Play で公開準備中」を、ストアへのリンクに変えます。ストアの URL は <code>https://play.google.com/store/apps/details?id=〈パッケージ名〉</code> です。</div></div></li>
+    </ol>
+  </section>
+
+  <!-- 07 OAuth -->
+  <section id="oauth">
+    <h2><span class="n">07</span>Google ログインを誰でも使えるようにする(任意)</h2>
+    <p class="desc">今は「テスト中」なので、テストユーザーに登録した人しか Google ログインを使えません。一般の人にも使ってもらうには、Google の確認(審査)が必要です。カレンダーの読み書きは「機密性の高い権限」のため、審査に数週間かかることがあります。</p>
+    <ol class="steps" data-group="oauth">
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">ブランディングを埋める</div><div class="b">「Google Auth Platform」→「ブランディング」で、アプリのホームページ(サイトの URL)、プライバシーポリシー、アプリのロゴ(<code>icon_512.png</code> を 120×120 に縮小したもの)を設定します。「ユーザー サポートメール」はログイン画面に表示されます。公開用のアドレスにしたい場合は、先に「IAM と管理」でそのアドレスをプロジェクトのオーナーとして追加します。</div></div></li>
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">承認済みドメインを確認する</div><div class="b">ホームページのドメイン(<code>〈GitHubユーザー名〉.github.io</code>)の所有を <a href="https://search.google.com/search-console" target="_blank" rel="noopener">Google Search Console</a> で確認します(「URL プレフィックス」でサイトの URL を入れ、HTML ファイルを GitHub のリポジトリに置く方法)。</div></div></li>
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">「アプリを公開」→ 確認を申請</div><div class="b">「対象」→「アプリを公開」。「検証センター」の案内に沿って、カレンダーの権限を使う理由と、実際に使っている様子の動画(YouTube の限定公開)を提出します。</div></div></li>
+    </ol>
+    <div class="callout ok" style="margin-top:12px"><b>急がなくて大丈夫です:</b>審査が終わるまでも、アプリの公開はできます。一般の人は iCal 方式(方法1)でカレンダーを取り込めるので、そちらを案内してください。</div>
+  </section>
+
+  <!-- 08 更新 -->
+  <section id="update">
+    <h2><span class="n">08</span>今後のアップデートの出し方</h2>
+    <p class="desc">アプリを直して新しい版を出すときの手順です。AI のコーディング アシスタントを使っている場合は、1〜3を任せることもできます。</p>
+    <ol class="steps" data-group="update">
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">バージョンを上げる</div><div class="b"><code>pubspec.yaml</code> の <code>version:</code> の数字を両方上げます。<b>+ の後ろの数字は、毎回かならず前より大きくします</b>(同じだとアップロードできません)。例:<code>1.0.1+2</code> → <code>1.0.2+3</code></div></div></li>
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">AAB を作る</div><div class="b">Flutter プロジェクトのフォルダでターミナルを開いて実行します(フォルダのパスに日本語が含まれるとビルドに失敗することがあります)。<div class="copy"><div class="val">flutter build appbundle --release --dart-define=STORE_BUILD=true</div><button type="button">コピー</button></div>できたファイル:<code>build\app\outputs\bundle\release\app-release.aab</code></div></div></li>
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">動作を確かめる</div><div class="b"><div class="copy"><div class="val">flutter analyze
+flutter test</div><button type="button">コピー</button></div>エラー0・テストがすべて合格なら OK です。</div></div></li>
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">Play にアップロード</div><div class="b"><a href="#upload">03</a> と同じ手順で、出したいトラック(内部テスト・クローズドテスト・製品版)に新しいリリースを作ります。</div></div></li>
+    </ol>
+  </section>
+
+  <!-- 09 トラブル -->
+  <section id="trouble">
+    <h2><span class="n">09</span>困ったとき</h2>
+    <p class="desc">これまでに実際に出たエラーと、その直し方です。</p>
+    <details class="faq"><summary>「パッケージ名は adhd.time.management とする必要があります」</summary><div>アップロードした AAB が古い名前で作られています。<code>android/app/build.gradle.kts</code> の <code>applicationId</code> が <code>adhd.time.management</code> になっているか確認して、作り直してください。</div></details>
+    <details class="faq"><summary>「バージョン コード ○ はすでに使用されています」</summary><div><code>pubspec.yaml</code> の + の後ろの数字を、今までより大きくして作り直してください(<a href="#update">08</a>)。</div></details>
+    <details class="faq"><summary>URL を入れると「403 レスポンス コードが返されました」</summary><div>Google のチェックがそのページを開けていません。claude.ai のページではなく、GitHub Pages の URL(<a href="#values">02</a>)を使ってください。</div></details>
+    <details class="faq"><summary>Google ログインで「serverClientId must be provided」</summary><div>ウェブ用クライアント ID がアプリに入っていません。Google Cloud で「ウェブ アプリケーション」のクライアントを作り、その ID を <code>serverClientId</code> に渡してください。</div></details>
+    <details class="faq"><summary>Google ログインで「DEVELOPER_ERROR」やコード 10 のエラー</summary><div>Google Cloud の Android クライアントのパッケージ名か SHA-1 が、アプリと合っていません。Play から入れた版は Play の署名の SHA-1、パソコンから入れた版はアップロード鍵の SHA-1 が必要です(<a href="#values">02</a>)。</div></details>
+    <details class="faq"><summary>Google ログインで「アクセスをブロック」「このアプリはテスト中です」</summary><div>そのアカウントがテストユーザーに登録されていません。Google Cloud →「対象」→「テストユーザー」に追加してください。</div></details>
+    <details class="faq"><summary>テストのリンクで「App not available」「招待されていません」</summary><div>① テスターに登録したアドレスと、ページを開いたブラウザのアカウントが違う(スマホに複数の Google アカウントがある場合によく起こります)。② 登録直後でまだ反映されていない。数十分待つか、アカウントを切り替えて開き直してください。</div></details>
+    <details class="faq"><summary>Play から入れようとすると「アプリはインストールされていません」「競合」</summary><div>パソコンから直接入れた版が残っています。アンインストールしてから入れ直してください(<a href="#phone">04</a>)。</div></details>
+    <details class="faq"><summary>スクリーンショットがアップロードできない</summary><div>縦横比は 9:16 ちょうどでないと受け付けられません。<code>store_assets\screenshots\</code> の画像(1350×2400)を使ってください。</div></details>
+    <details class="faq"><summary>審査で却下された</summary><div>メールと Play Console の「ポリシー ステータス」に理由が書かれています。多いのは、権限の申告内容とアプリの動作が合わない、プライバシーポリシーの内容が足りない、の2つです。</div></details>
+  </section>
+
+  <footer>2026年9月の記録です。Play と Google Cloud の画面や要件は変わることがあるので、実施するときは公式のヘルプもあわせて確認してください。</footer>
+</main>
+</div>
+
+<script>
+(function(){
+  var KEY='adhd-handbook-v1', state={};
+  try{ state=JSON.parse(localStorage.getItem(KEY)||'{}')||{}; }catch(e){}
+  // 手順のチェック状態を保存・復元する
+  document.querySelectorAll('ol.steps').forEach(function(ol){
+    var g=ol.getAttribute('data-group');
+    ol.querySelectorAll(':scope > li').forEach(function(li,i){
+      var k=g+'-'+i, cb=li.querySelector('input[type=checkbox]');
+      if(state[k]){cb.checked=true;li.classList.add('checked');}
+      cb.addEventListener('change',function(){
+        li.classList.toggle('checked',cb.checked); state[k]=cb.checked;
+        try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}
+      });
+    });
+  });
+  // コピーボタン
+  document.querySelectorAll('.copy button').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var val=btn.parentNode.querySelector('.val'), text=val.textContent;
+      function done(){btn.textContent='コピーしました';btn.classList.add('ok');setTimeout(function(){btn.textContent='コピー';btn.classList.remove('ok');},1600);}
+      function fallback(){var r=document.createRange();r.selectNodeContents(val);var s=getSelection();s.removeAllRanges();s.addRange(r);btn.textContent='選択しました';setTimeout(function(){btn.textContent='コピー';},1600);}
+      try{navigator.clipboard.writeText(text).then(done,fallback);}catch(e){fallback();}
+    });
+  });
+})();
+</script>
+</body>
+</html>
