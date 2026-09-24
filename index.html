@@ -2,16 +2,234 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<title>ADHD時間管理 - サポートページ</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ADHD時間管理</title>
+<meta name="description" content="アラーム・タイマー・ポモドーロ・カレンダー・ToDoをひとつに。時間の流れを見える化する Android アプリ「ADHD時間管理」。">
+<link rel="icon" href="img/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap">
 <style>
-body{font-family:sans-serif;max-width:600px;margin:60px auto;padding:0 16px;color:#222}
-a{display:block;margin:12px 0;font-size:18px}
+  :root{
+    --bg:#131a28;
+    --bg2:#182234;
+    --panel:#1d283c;
+    --ink:#eef2f7;
+    --sub:#aab5c6;
+    --faint:#6f7c91;
+    --line:#2a364c;
+    --mint:#50e3c2;
+    --mint-dim:#26394a;
+    color-scheme:dark;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:var(--bg);color:var(--ink);
+    font-family:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",sans-serif;
+    line-height:1.8;font-size:16px;
+  }
+  .wrap{max-width:1040px;margin:0 auto;padding-inline:20px}
+  a{color:var(--mint)}
+  a:focus-visible{outline:2px solid var(--mint);outline-offset:3px;border-radius:4px}
+
+  /* ヘッダー */
+  .top{display:flex;align-items:center;justify-content:space-between;padding-block:20px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--ink);text-decoration:none}
+  .brand img{width:32px;height:32px;border-radius:8px}
+  .top nav{display:flex;gap:20px;font-size:14px}
+  .top nav a{color:var(--sub);text-decoration:none}
+  .top nav a:hover{color:var(--mint)}
+
+  /* ヒーロー:アイコンと同じ7セグ時計を現在時刻で表示 */
+  .hero{display:grid;grid-template-columns:auto 1fr;gap:56px;align-items:center;padding-block:48px 72px}
+  .clock{
+    background:var(--bg2);border:1px solid var(--line);border-radius:40px;
+    padding:34px 38px;display:flex;flex-direction:column;align-items:center;gap:14px;
+  }
+  .clock svg{display:block;width:220px;height:auto}
+  .clock .cap{font-size:12px;letter-spacing:.14em;color:var(--faint)}
+  h1{font-size:clamp(34px,6vw,56px);line-height:1.2;margin:0 0 18px;font-weight:900;text-wrap:balance}
+  h1 .accent{color:var(--mint)}
+  .lead{color:var(--sub);font-size:17px;max-width:34em;margin:0 0 28px}
+  .cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+  .badge{
+    display:inline-flex;align-items:center;gap:10px;padding:12px 20px;border-radius:999px;
+    background:var(--mint);color:#0d1b1f;font-weight:700;font-size:15px;
+  }
+  .note{font-size:13px;color:var(--faint)}
+  @media (max-width:760px){
+    .hero{grid-template-columns:1fr;gap:32px;padding-block:24px 48px;justify-items:center;text-align:center}
+    .lead{margin-inline:auto}
+    .cta{justify-content:center}
+    .top nav{display:none}
+  }
+
+  /* スクリーンショット */
+  section{padding-block:56px;border-top:1px solid var(--line)}
+  h2{font-size:clamp(24px,4vw,32px);margin:0 0 10px;font-weight:900;text-wrap:balance}
+  .sec-lead{color:var(--sub);margin:0 0 36px;max-width:40em}
+  .shots{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+  .shot{display:flex;flex-direction:column;gap:12px}
+  .shot img{width:100%;height:auto;border-radius:22px;border:1px solid var(--line);background:var(--bg2)}
+  .shot b{font-size:15px}
+  .shot span{font-size:13.5px;color:var(--sub);line-height:1.6}
+  @media (max-width:860px){ .shots{grid-template-columns:repeat(2,1fr)} }
+
+  /* 機能一覧 */
+  .feats{display:grid;grid-template-columns:repeat(2,1fr);gap:0 40px;margin:0;padding:0;list-style:none}
+  .feats li{padding:16px 0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:10px 1fr;gap:14px}
+  .feats li::before{content:"";width:10px;height:3px;background:var(--mint);border-radius:2px;margin-top:.8em}
+  .feats b{display:block}
+  .feats span{color:var(--sub);font-size:14.5px}
+  @media (max-width:640px){ .feats{grid-template-columns:1fr} }
+
+  .disclaim{
+    margin-top:32px;background:var(--panel);border-radius:14px;padding:16px 20px;
+    color:var(--sub);font-size:14px;
+  }
+
+  /* サポート */
+  .support{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .support a,.support div{
+    display:flex;flex-direction:column;gap:4px;padding:20px;border:1px solid var(--line);border-radius:14px;
+    text-decoration:none;color:var(--ink);background:var(--bg2);
+  }
+  .support a:hover{border-color:var(--mint)}
+  .support small{color:var(--faint);font-size:12.5px}
+  .support .mail{user-select:all;color:var(--mint);word-break:break-all}
+  @media (max-width:760px){ .support{grid-template-columns:1fr} }
+
+  footer{border-top:1px solid var(--line);padding-block:28px 40px;color:var(--faint);font-size:13px}
 </style>
 </head>
 <body>
-<h1>ADHD時間管理</h1>
-<a href="privacy-policy.html">プライバシーポリシー</a>
-<a href="account-deletion.html">アカウント削除・データ削除について</a>
+
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="./"><img src="img/icon.png" alt="">ADHD時間管理</a>
+    <nav>
+      <a href="#screens">画面</a>
+      <a href="#features">機能</a>
+      <a href="#support">サポート</a>
+    </nav>
+  </header>
+
+  <div class="hero">
+    <div class="clock" aria-label="現在時刻">
+      <svg id="seg" viewBox="0 0 220 320" role="img" aria-label=""></svg>
+      <span class="cap">上が時・下が分</span>
+    </div>
+    <div>
+      <h1>時間の流れを、<br><span class="accent">目で見える</span>ように。</h1>
+      <p class="lead">「気づいたら時間が過ぎていた」「予定を忘れてしまう」――そんな悩みのために作った Android アプリです。アラーム・タイマー・ポモドーロ・カレンダー・ToDo をひとつにまとめました。</p>
+      <div class="cta">
+        <span class="badge">Google Play で公開準備中</span>
+        <span class="note">Android 7.0 以降 / 無料</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section id="screens">
+  <div class="wrap">
+    <h2>毎日使う4つの画面</h2>
+    <p class="sec-lead">すべて下のタブからワンタップで切り替えられます。</p>
+    <div class="shots">
+      <figure class="shot" style="margin:0">
+        <img src="img/calendar.webp" width="540" height="1200" alt="カレンダー画面。1日の予定が時間軸に並ぶ" loading="lazy">
+        <b>カレンダー</b><span>日・2日・3日・週・月で表示。赤い線で「今」の位置がわかります。</span>
+      </figure>
+      <figure class="shot" style="margin:0">
+        <img src="img/timer.webp" width="540" height="1200" alt="タイマー画面。5:00と表示され、1分から60分のボタンが並ぶ" loading="lazy">
+        <b>タイマー</b><span>1分〜60分をワンタップ。好きな時間も設定できます。</span>
+      </figure>
+      <figure class="shot" style="margin:0">
+        <img src="img/pomodoro.webp" width="540" height="1200" alt="ポモドーロ画面。集中25分・休憩5分の設定とフォーカス開始ボタン" loading="lazy">
+        <b>ポモドーロ</b><span>集中と休憩を自動で切り替え。記録はカレンダーに残ります。</span>
+      </figure>
+      <figure class="shot" style="margin:0">
+        <img src="img/stopwatch.webp" width="540" height="1200" alt="ストップウォッチ画面。リマインダー間隔の入力欄とスタートボタン" loading="lazy">
+        <b>ストップウォッチ</b><span>「5分ごと」など一定間隔で通知。ラップも記録できます。</span>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="wrap">
+    <h2>できること</h2>
+    <p class="sec-lead">「忘れない」「気づける」「集中できる」ための機能です。</p>
+    <ul class="feats">
+      <li><div><b>ロック画面に大きく表示</b><span>アラームは画面が消えていても全画面で表示。横向きでも操作できます。</span></div></li>
+      <li><div><b>予定を読み上げ</b><span>アラーム音の代わりに、予定名や開始時刻を声で知らせます。</span></div></li>
+      <li><div><b>「ストップ」で止める</b><span>手がふさがっていても、話しかけるだけでアラームを止められます。</span></div></li>
+      <li><div><b>ToDo 管理</b><span>予定と一緒にやることを登録。未完了を指定時刻に読み上げることもできます。</span></div></li>
+      <li><div><b>フォーカスの記録</b><span>何にどれだけ集中したかを、種類ごとに集計して見られます。</span></div></li>
+      <li><div><b>ホーム画面ウィジェット</b><span>今日の予定と、各機能へのショートカットを置けます。</span></div></li>
+      <li><div><b>外部サービスと連携(任意)</b><span>Google カレンダー・iCal・Notion・Obsidian から予定を取り込めます。</span></div></li>
+      <li><div><b>機内モード中は鳴らさない</b><span>飛行機や会議中など、鳴らしたくない場面に対応します。</span></div></li>
+    </ul>
+    <p class="disclaim">本アプリは時間管理を補助するツールです。病気の診断・治療を目的とするものではありません。</p>
+  </div>
+</section>
+
+<section id="support">
+  <div class="wrap">
+    <h2>サポート</h2>
+    <p class="sec-lead">データはすべて端末の中に保存され、開発者のサーバーには送られません。</p>
+    <div class="support">
+      <a href="privacy-policy.html"><b>プライバシーポリシー</b><small>扱う情報と権限の説明</small></a>
+      <a href="account-deletion.html"><b>アカウント・データの削除</b><small>Google 連携の解除方法と保持期間</small></a>
+      <div><b>お問い合わせ</b><span class="mail">munerin2018@gmail.com</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  <footer>© 2026 munerin2018 — ADHD時間管理</footer>
+</div>
+
+<script>
+// アプリのアイコンと同じ7セグメント表示で、現在時刻(上=時・下=分)を描く
+(function(){
+  var SEG={"0":"abcdef","1":"bc","2":"abged","3":"abgcd","4":"fgbc","5":"afgcd","6":"afgedc","7":"abc","8":"abcdefg","9":"abcdfg"};
+  var ON="#50e3c2", OFF="#26394a";
+  var svg=document.getElementById("seg");
+  var NS="http://www.w3.org/2000/svg";
+
+  // 数字1文字分(x,y,幅w,高さh)のセグメント7本を六角形で作る
+  function digit(x,y,w,h){
+    var t=w*0.2, hf=t/2, polys={};
+    function horiz(cy){var x0=x+hf+2,x1=x+w-hf-2;return [[x0,cy],[x0+hf,cy-hf],[x1-hf,cy-hf],[x1,cy],[x1-hf,cy+hf],[x0+hf,cy+hf]];}
+    function vert(cx,top){var y0=(top?y+hf:y+h/2)+2,y1=(top?y+h/2:y+h-hf)-2;return [[cx,y0],[cx+hf,y0+hf],[cx+hf,y1-hf],[cx,y1],[cx-hf,y1-hf],[cx-hf,y0+hf]];}
+    var shapes={a:horiz(y+hf),g:horiz(y+h/2),d:horiz(y+h-hf),f:vert(x+hf,true),b:vert(x+w-hf,true),e:vert(x+hf,false),c:vert(x+w-hf,false)};
+    for(var k in shapes){
+      var p=document.createElementNS(NS,"polygon");
+      p.setAttribute("points",shapes[k].map(function(q){return q.join(",")}).join(" "));
+      p.setAttribute("fill",OFF);
+      svg.appendChild(p); polys[k]=p;
+    }
+    return function(ch){ for(var k in polys){ polys[k].setAttribute("fill",SEG[ch].indexOf(k)>=0?ON:OFF); } };
+  }
+
+  var dw=86, dh=133, gap=18, rowGap=24, left=(220-(dw*2+gap))/2, top=(320-(dh*2+rowGap))/2;
+  var setters=[];
+  for(var r=0;r<2;r++) for(var i=0;i<2;i++) setters.push(digit(left+i*(dw+gap), top+r*(dh+rowGap), dw, dh));
+  // 上下の段の間の2つの点
+  [-18,18].forEach(function(dx){
+    var c=document.createElementNS(NS,"circle");
+    c.setAttribute("cx",110+dx); c.setAttribute("cy",160); c.setAttribute("r",5); c.setAttribute("fill",ON);
+    svg.appendChild(c);
+  });
+
+  function tick(){
+    var d=new Date(), s=("0"+d.getHours()).slice(-2)+("0"+d.getMinutes()).slice(-2);
+    for(var i=0;i<4;i++) setters[i](s[i]);
+    svg.setAttribute("aria-label", d.getHours()+"時"+d.getMinutes()+"分");
+  }
+  tick(); setInterval(tick, 10000);
+})();
+</script>
 </body>
 </html>
