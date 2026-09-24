@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ADHD時間管理 アカウント削除</title>
+<style>
+  :root{
+    --ink:#1c2230;--sub:#4b5468;--faint:#8a93a6;--bg:#f7f6f2;--panel:#ffffff;
+    --line:#e4e2da;--accent:#2f7d6b;--accent-soft:#e4f0ec;
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#eef0f4;--sub:#b7bdca;--faint:#7b8394;--bg:#14171f;--panel:#1b1f29;
+      --line:#2b3040;--accent:#6fd3b8;--accent-soft:#1f2f2c;
+      color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#eef0f4;--sub:#b7bdca;--faint:#7b8394;--bg:#14171f;--panel:#1b1f29;
+    --line:#2b3040;--accent:#6fd3b8;--accent-soft:#1f2f2c;
+    color-scheme:dark;
+  }
+  body{
+    background:var(--bg);color:var(--ink);
+    font-family:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",sans-serif;
+    padding-inline:16px;padding-block:48px;
+  }
+  main{max-width:680px;margin:0 auto}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;font-size:12px;letter-spacing:.08em;
+    color:var(--accent);background:var(--accent-soft);padding:5px 12px;border-radius:999px;font-weight:700;
+  }
+  h1{font-size:clamp(24px,5vw,32px);line-height:1.3;margin:18px 0 6px;text-wrap:balance}
+  .updated{color:var(--faint);font-size:13px;margin-bottom:36px}
+  h2{font-size:17px;margin:40px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+  h2 .num{color:var(--accent);font-variant-numeric:tabular-nums;margin-right:8px}
+  p{font-size:15px;line-height:1.85;color:var(--sub);margin:0 0 14px;max-width:60ch}
+  strong{color:var(--ink)}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:0 0 14px}
+  ol,ul{margin:0 0 14px;padding-left:1.3em;color:var(--sub);font-size:15px;line-height:1.9}
+  li{margin-bottom:8px}
+  li b{color:var(--ink)}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--panel);
+    border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  thead th{text-align:left;background:var(--accent-soft);color:var(--ink);font-weight:700;
+    padding:10px 12px;border-bottom:1px solid var(--line)}
+  tbody td{padding:10px 12px;color:var(--sub);border-bottom:1px solid var(--line);vertical-align:top;line-height:1.6}
+  tbody tr:last-child td{border-bottom:none}
+  .tbl-wrap{overflow-x:auto;margin-bottom:14px}
+  .contact{display:flex;align-items:center;gap:10px;font-size:15px;color:var(--ink);font-weight:600}
+  .foot{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);color:var(--faint);font-size:12.5px}
+</style>
+</head>
+<body>
+
+
+<main>
+  <span class="eyebrow">Account &amp; Data Deletion</span>
+  <h1>ADHD時間管理 アカウント削除・データ削除について</h1>
+  <p class="updated">最終更新日:2026年9月24日</p>
+
+  <p>「ADHD時間管理」(開発者:munerin2018)には、アプリ独自のアカウント登録機能はありません。ログインが必要なのは、任意機能である Google カレンダー連携のときの Google アカウントでの認証(OAuth)のみです。</p>
+
+  <h2><span class="num">01</span>アカウント(Google連携)を削除する方法</h2>
+  <p>次のどちらの方法でも、アプリからあなたの Google アカウントへのアクセスを完全に取り消せます。</p>
+  <ol>
+    <li><b>アプリ内から:</b>「ADHD時間管理」を開く →「設定」→「Googleカレンダー連携」→ ログアウトボタンをタップ。この操作はすぐに反映されます。</li>
+    <li><b>Googleアカウント側から:</b><a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">Google アカウントの「サードパーティ製アプリとサービス」</a>を開き、「ADHD時間管理」を選んでアクセス権を削除してください。こちらもすぐに反映されます。</li>
+  </ol>
+  <p>どちらの方法でも、以後アプリが Google カレンダーのデータを読み書きすることはなくなります。</p>
+
+  <h2><span class="num">02</span>削除されるデータ・保持期間</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>データ</th><th>削除のタイミング</th><th>保持期間</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Google カレンダーへのアクセス権(認証トークン)</td>
+          <td>上記いずれかの操作をした瞬間</td>
+          <td>削除操作まで(開発者のサーバーには一切保存していません)</td>
+        </tr>
+        <tr>
+          <td>Google 連携で取り込んだ予定・アラーム</td>
+          <td>アプリをアンインストールした瞬間、またはアプリ内で個別に削除した時</td>
+          <td>端末内にのみ保存。アプリを使い続ける限り、削除するまで残ります</td>
+        </tr>
+        <tr>
+          <td>その他すべてのデータ(アラーム・タイマー・ToDo・設定など)</td>
+          <td>アプリをアンインストールした瞬間</td>
+          <td>端末内にのみ保存</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p>本アプリの開発者は、上記のいずれのデータも自分のサーバーに保存していません。すべて利用者の端末内、または Google 自身のサーバー(Google が管理するカレンダーデータ)に存在します。</p>
+
+  <h2><span class="num">03</span>アカウントを削除せずに一部のデータだけ削除したい場合</h2>
+  <p>Google アカウントとの連携を維持したまま、取り込んだ予定やアラームだけを消したい場合は、アプリの「アラーム一覧」または「カレンダー」画面から該当の予定を個別に削除できます。連携自体を止める必要はありません。</p>
+
+  <h2><span class="num">04</span>お問い合わせ</h2>
+  <div class="card"><div class="contact">munerin2018@gmail.com</div></div>
+
+  <div class="foot">ADHD時間管理 — Account &amp; Data Deletion</div>
+</main>
+
+</body>
+</html>
