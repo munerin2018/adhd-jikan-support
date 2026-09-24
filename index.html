@@ -69,12 +69,13 @@
   section{padding-block:56px;border-top:1px solid var(--line)}
   h2{font-size:clamp(24px,4vw,32px);margin:0 0 10px;font-weight:900;text-wrap:balance}
   .sec-lead{color:var(--sub);margin:0 0 36px;max-width:40em}
-  .shots{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+  .shots{display:grid;grid-template-columns:repeat(5,1fr);gap:18px}
   .shot{display:flex;flex-direction:column;gap:12px}
   .shot img{width:100%;height:auto;border-radius:22px;border:1px solid var(--line);background:var(--bg2)}
   .shot b{font-size:15px}
   .shot span{font-size:13.5px;color:var(--sub);line-height:1.6}
-  @media (max-width:860px){ .shots{grid-template-columns:repeat(2,1fr)} }
+  @media (max-width:960px){ .shots{grid-template-columns:repeat(3,1fr)} }
+  @media (max-width:600px){ .shots{grid-template-columns:repeat(2,1fr)} }
 
   /* 機能一覧 */
   .feats{display:grid;grid-template-columns:repeat(2,1fr);gap:0 40px;margin:0;padding:0;list-style:none}
@@ -133,12 +134,16 @@
 
 <section id="screens">
   <div class="wrap">
-    <h2>毎日使う4つの画面</h2>
+    <h2>毎日使う5つの画面</h2>
     <p class="sec-lead">すべて下のタブからワンタップで切り替えられます。</p>
     <div class="shots">
       <figure class="shot" style="margin:0">
         <img src="img/calendar.webp" width="540" height="1200" alt="カレンダー画面。1日の予定が時間軸に並ぶ" loading="lazy">
         <b>カレンダー</b><span>日・2日・3日・週・月で表示。赤い線で「今」の位置がわかります。</span>
+      </figure>
+      <figure class="shot" style="margin:0">
+        <img src="img/alarms.webp" width="540" height="1200" alt="アラーム一覧画面。すべて・今日・明日・今週・終了済みの切り替えボタン" loading="lazy">
+        <b>アラーム</b><span>今日・明日・今週で絞り込み。終わったものは自動で片付きます。</span>
       </figure>
       <figure class="shot" style="margin:0">
         <img src="img/timer.webp" width="540" height="1200" alt="タイマー画面。5:00と表示され、1分から60分のボタンが並ぶ" loading="lazy">
@@ -181,7 +186,7 @@
     <div class="support">
       <a href="privacy-policy.html"><b>プライバシーポリシー</b><small>扱う情報と権限の説明</small></a>
       <a href="account-deletion.html"><b>アカウント・データの削除</b><small>Google 連携の解除方法と保持期間</small></a>
-      <div><b>お問い合わせ</b><span class="mail">munerin2018@gmail.com</span></div>
+      <div><b>お問い合わせ</b><span class="mail">uesin2026@gmail.com</span></div>
     </div>
   </div>
 </section>
