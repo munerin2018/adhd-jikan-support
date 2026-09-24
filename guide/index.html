@@ -145,11 +145,11 @@
       <li class="done"><span class="bar"></span>アプリの準備</li>
       <li class="done"><span class="bar"></span>Google Cloud</li>
       <li class="done"><span class="bar"></span>Play の設定</li>
-      <li class="now"><span class="bar"></span>内部テスト v2</li>
-      <li><span class="bar"></span>クローズドテスト<br>12人×14日</li>
+      <li class="done"><span class="bar"></span>内部テスト v2</li>
+      <li class="now"><span class="bar"></span>クローズドテスト<br>12人×14日</li>
       <li><span class="bar"></span>製品版公開</li>
     </ol>
-    <div class="callout ok" style="margin-top:18px"><b>2026年9月時点の記録:</b>内部テストでバージョン1を公開し、Google ログインを直したバージョン2を出すところまで進みました。この先(クローズドテスト・製品版)の手順も、公式の要件をもとに書いています。</div>
+    <div class="callout ok" style="margin-top:18px"><b>2026年9月時点の記録:</b>内部テストを経て、クローズドテストを Google の審査に提出するところまで進みました。この先(クローズドテスト・製品版)の手順も、公式の要件をもとに書いています。</div>
   </header>
 
   <!-- 01 経緯 -->
@@ -165,6 +165,7 @@
         <li><span class="d">9/24</span><div><b>サポートサイトを公開</b><span>claude.ai のページは Google のチェックから見えず 403 エラーになったため、GitHub Pages に移しました。問い合わせ先は、個人用とは別に用意した公開用のメールアドレスにそろえました。</span></div></li>
         <li><span class="d">9/24</span><div><b>パッケージ名を <code>adhd.time.management</code> に確定</b><span>Play 側で先にこの名前で登録されていたため、アプリ側を合わせました。この名前は二度と変えられません。</span></div></li>
         <li><span class="d">9/24</span><div><b>内部テストでバージョン1を公開</b><span>Play からスマホへのインストールまで確認済みです。</span></div></li>
+        <li><span class="d">9/25</span><div><b>クローズドテストを審査に提出</b><span>テスター用の Google グループを作り、バージョン2でクローズドテストを作成。途中で「全画面インテント」と「広告 ID」の申告を求められたので回答してから提出しました(<a href="#closed">05</a>)。</span></div></li>
         <li><span class="d">9/24</span><div><b>Google ログインを修正(バージョン2)</b><span>Android でも「ウェブ用クライアント ID」が必要だったため追加しました。Play 署名用の Android クライアントも追加し、実機でログインとカレンダーの読み取りまで確認済みです。</span></div></li>
       </ol>
     </div>
@@ -256,7 +257,7 @@ Googleログインの不具合を修正
 
     <h3>準備:テスター用の Google グループを作る</h3>
     <ol class="steps" data-group="group">
-      <li><input type="checkbox" aria-label="完了"><div><div class="t">Google グループを作る</div><div class="b"><a href="https://groups.google.com/my-groups" target="_blank" rel="noopener">groups.google.com</a> →「グループを作成」。名前の例:<code>adhd-jikan-testers</code>。「グループに参加できるユーザー」は「ウェブ上の誰でも参加をリクエストできる」か「招待されたユーザーのみ」。メンバーの一覧は「グループのメンバー」に限定して、テスター同士のメールアドレスが見えないようにします。</div></div></li>
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">Google グループを作る</div><div class="b"><a href="https://groups.google.com/my-groups" target="_blank" rel="noopener">groups.google.com</a> →「グループを作成」。名前の例:<code>〈アプリ名〉-testers</code>。「グループに参加できるユーザー」は「ウェブ上の誰でも参加をリクエストできる」か「招待されたユーザーのみ」。メンバーの一覧は「グループのメンバー」に限定して、テスター同士のメールアドレスが見えないようにします。</div></div></li>
       <li><input type="checkbox" aria-label="完了"><div><div class="t">テスターを集める(12人以上。余裕をみて15人ほど)</div><div class="b">家族・友人・SNS で募集します。<b>途中で抜ける人が出ると14日が数え直しになる</b>ことがあるので、多めに集めてください。テスターの Google アカウントのアドレスを聞いて、グループに追加します。</div></div></li>
     </ol>
 
@@ -264,9 +265,12 @@ Googleログインの不具合を修正
     <ol class="steps" data-group="closed">
       <li><input type="checkbox" aria-label="完了"><div><div class="t">トラックを開く</div><div class="b">「テストとリリース」→「テスト」→「クローズド テスト」→ 最初からある「Alpha」トラックの「管理」(無ければ「トラックを作成」)。</div></div></li>
       <li><input type="checkbox" aria-label="完了"><div><div class="t">国と地域を選ぶ</div><div class="b">「国 / 地域」タブ →「国 / 地域を追加」→「日本」にチェック → 保存。</div></div></li>
-      <li><input type="checkbox" aria-label="完了"><div><div class="t">テスターを登録する</div><div class="b">「テスター」タブ →「Google グループ」を選び、グループのアドレス(例:<code>adhd-jikan-testers@googlegroups.com</code>)を入れて保存。「フィードバック用 URL またはメールアドレス」には公開用のメールアドレス。</div></div></li>
-      <li><input type="checkbox" aria-label="完了"><div><div class="t">リリースを作る</div><div class="b">「リリース」タブ →「新しいリリースを作成」→「ライブラリから追加」で、内部テストに出したのと同じ AAB(2 (1.0.1))を選ぶ → リリースノート →「次へ」→「保存して公開」。</div></div></li>
-      <li><input type="checkbox" aria-label="完了"><div><div class="t">Google の審査を待つ</div><div class="b">クローズドテストは初回に審査があります(数時間〜数日)。「公開の概要」で状態を確認できます。通ると「テスター」タブに参加用リンクが出ます。</div></div></li>
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">テスターを登録する</div><div class="b">「テスター」タブ →「Google グループ」を選び、グループのアドレス(例:<code>〈グループ名〉@googlegroups.com</code>)を入れて保存。「フィードバック用 URL またはメールアドレス」には公開用のメールアドレス。</div></div></li>
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">リリースを作る</div><div class="b">「リリース」タブ →「新しいリリースを作成」→「<b>ライブラリから追加</b>」で、内部テストに出したのと同じ AAB を選んで「リリースに追加」。リリース名は自動で入ります。リリースノートは <code>&lt;ja-JP&gt;</code> と <code>&lt;/ja-JP&gt;</code> の間に書きます →「次へ」。</div></div></li>
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">「全画面インテントの権限」のエラーを片付ける</div><div class="b">確認画面で「<b>このアプリが全画面インテントの権限を使用するかどうかを申告してください</b>」という赤いエラーが出ます(ロック画面にアラームを全画面で出すアプリでは必ず出ます)。「宣言に移動」を押し、次のように答えて保存します。<ul><li>アプリのコア機能は何ですか? →「<b>目覚まし時計</b>」</li><li>インストール時にこの権限が事前付与されることを希望しますか? →「<b>はい</b>」</li></ul>保存したら、リリースの確認画面に戻って「保存」。「リリースの準備が完了しました」になれば OK です。</div></div></li>
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">「公開の概要」で事前チェックの問題を片付ける</div><div class="b">「審査に送信」のボタンが押せないときは、「一般的な問題のクイック チェック」の「○件の問題を表示」を開きます。今回出たのは「<b>広告 ID の申告が不完全です</b>」でした。「申告を完了する」→「アプリで広告 ID を使用していますか?」→ 広告を入れていなければ「<b>いいえ</b>」→ 保存。<br>広告 ID を本当に使っていないかは、ビルドした APK の権限一覧に <code>com.google.android.gms.permission.AD_ID</code> が無いことで確かめられます(<code>aapt2 dump permissions app-release.apk</code>)。</div></div></li>
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">「○件の変更を審査に送信」を押す</div><div class="b">「公開の概要」の青いボタン → 確認で「変更を審査に送信」。表示が「<b>審査中の変更</b>」に変われば提出完了です。事前チェックは送信後も続きます(十数分)。</div></div></li>
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">Google の審査を待つ</div><div class="b">「通常7日以内」と表示されます。結果はデベロッパー アカウントのメールに届きます。通ると、クローズドテストの「テスター」タブに参加用リンクが出ます。</div></div></li>
       <li><input type="checkbox" aria-label="完了"><div><div class="t">テスターに案内を送る</div><div class="b">下の文をコピーして、参加用リンクを入れて送ります。<div class="copy"><div class="val jp">ADHD時間管理(アラーム・タイマー・予定管理のアプリ)のテストに協力してもらえませんか?
 
 1. このリンクを開いて「テスターになる」を押す:
