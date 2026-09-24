@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>クローズドテストのテスター募集ガイド</title>
+<meta name="description" content="Google Play のクローズドテスト(12人・14日間)に必要なテスターを、X で募集して参加してもらうまでの手順。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+  :root{
+    --bg:#f2f4f6; --panel:#ffffff; --ink:#172031; --sub:#4a5568; --faint:#8491a3;
+    --line:#dde3ea; --accent:#177d68; --accent-ink:#ffffff; --accent-soft:#e0f2ec;
+    --warn:#9a5b06; --warn-soft:#fbefd9; --code-bg:#eef1f5; --x:#0f1419; --x-sub:#536471; --x-line:#cfd9de;
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#10161f; --panel:#17202c; --ink:#e7ecf2; --sub:#b1bccb; --faint:#7a879a;
+      --line:#263244; --accent:#50e3c2; --accent-ink:#0d1a1e; --accent-soft:#15302b;
+      --warn:#f0b35a; --warn-soft:#32271a; --code-bg:#0e151f; --x:#e7e9ea; --x-sub:#8b98a5; --x-line:#2f3336;
+      color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#10161f; --panel:#17202c; --ink:#e7ecf2; --sub:#b1bccb; --faint:#7a879a;
+    --line:#263244; --accent:#50e3c2; --accent-ink:#0d1a1e; --accent-soft:#15302b;
+    --warn:#f0b35a; --warn-soft:#32271a; --code-bg:#0e151f; --x:#e7e9ea; --x-sub:#8b98a5; --x-line:#2f3336;
+    color-scheme:dark;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--bg);color:var(--ink);font-family:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",sans-serif;font-size:15.5px;line-height:1.8}
+  .wrap{max-width:820px;margin:0 auto;padding-inline:16px;padding-block:32px 80px;display:flex;flex-direction:column;gap:44px}
+  a{color:var(--accent)}
+  code{font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;font-size:.86em;background:var(--code-bg);padding:1px 6px;border-radius:5px;word-break:break-all}
+  header .kicker{font-size:12px;letter-spacing:.12em;color:var(--accent);font-weight:700}
+  h1{font-size:clamp(28px,5.5vw,40px);line-height:1.25;margin:8px 0 12px;font-weight:900;text-wrap:balance}
+  .lead{color:var(--sub);margin:0;max-width:62ch}
+  h2{font-size:23px;margin:0 0 6px;font-weight:900;text-wrap:balance;display:flex;gap:12px;align-items:baseline}
+  h2 .n{font-family:"JetBrains Mono",monospace;font-size:14px;color:var(--accent);font-weight:500}
+  h3{font-size:17px;margin:22px 0 8px}
+  .desc{color:var(--sub);margin:0 0 16px;max-width:64ch}
+  p{margin:0 0 10px}
+
+  /* 要点の3つの数字 */
+  .facts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:22px}
+  .fact{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+  .fact b{display:block;font-size:26px;font-weight:900;color:var(--accent);font-variant-numeric:tabular-nums;line-height:1.3}
+  .fact span{font-size:13.5px;color:var(--sub)}
+  @media (max-width:560px){ .facts{grid-template-columns:1fr} }
+
+  /* 流れ */
+  .flow{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;counter-reset:f}
+  .flow li{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:14px;counter-increment:f}
+  .flow li::before{content:counter(f);display:block;font-family:"JetBrains Mono",monospace;color:var(--accent);font-size:13px}
+  .flow li b{display:block}
+  .flow li span{color:var(--sub);font-size:13px}
+  @media (max-width:680px){ .flow{grid-template-columns:repeat(2,1fr)} }
+
+  /* 表 */
+  .tbl{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:var(--code-bg);font-weight:700;white-space:nowrap}
+  tr:last-child td{border-bottom:none}
+  td.set{font-weight:700;white-space:nowrap}
+
+  /* 手順 */
+  ol.steps{list-style:none;margin:0;padding:0;border:1px solid var(--line);border-radius:14px;background:var(--panel);overflow:hidden}
+  ol.steps > li{display:grid;grid-template-columns:26px 1fr;gap:12px;padding:14px 18px;border-top:1px solid var(--line)}
+  ol.steps > li:first-child{border-top:none}
+  ol.steps input{width:19px;height:19px;margin:3px 0 0;accent-color:var(--accent);cursor:pointer}
+  ol.steps .t{font-weight:700}
+  ol.steps .b{color:var(--sub);font-size:14.5px}
+  ol.steps li.checked .t{color:var(--faint);text-decoration:line-through}
+
+  /* X の投稿カード */
+  .thread{display:flex;flex-direction:column;border:1px solid var(--x-line);border-radius:16px;background:var(--panel);overflow:hidden}
+  .post{display:grid;grid-template-columns:40px 1fr;gap:12px;padding:14px 16px;border-top:1px solid var(--x-line);position:relative}
+  .post:first-child{border-top:none}
+  .avatar{width:40px;height:40px;border-radius:50%;background:#161e2e;display:grid;place-items:center;overflow:hidden}
+  .avatar svg{width:28px;height:28px}
+  .post .who{font-size:14px;color:var(--x-sub)}
+  .post .who b{color:var(--x)}
+  .post .label{position:absolute;top:14px;right:16px;font-size:11.5px;color:var(--x-sub);letter-spacing:.04em}
+  .post pre{margin:4px 0 8px;white-space:pre-wrap;word-break:break-word;font-family:inherit;font-size:15px;line-height:1.65;color:var(--x)}
+  .post .ph{color:var(--accent);font-weight:700}
+  .post .tools{display:flex;gap:10px;align-items:center;font-size:12.5px;color:var(--x-sub)}
+  .post button{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:4px 14px;font:inherit;font-size:13px;cursor:pointer}
+  .post button:hover{border-color:var(--accent);color:var(--accent)}
+  .post button.ok{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+  button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  .callout{border-radius:12px;padding:12px 16px;font-size:14.5px}
+  .callout.warn{background:var(--warn-soft)} .callout.warn b{color:var(--warn)}
+  .callout.ok{background:var(--accent-soft)} .callout.ok b{color:var(--accent)}
+  .stack{display:flex;flex-direction:column;gap:12px}
+
+  details.faq{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:0 16px}
+  details.faq + details.faq{margin-top:8px}
+  details.faq summary{cursor:pointer;padding:12px 0;font-weight:700}
+  details.faq > div{padding:0 0 14px;color:var(--sub);font-size:14.5px}
+  footer{color:var(--faint);font-size:12.5px;border-top:1px solid var(--line);padding-top:16px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <span class="kicker">GOOGLE PLAY / クローズドテスト</span>
+    <h1>テスター募集ガイド</h1>
+    <p class="lead">個人のデベロッパー アカウントで Google Play にアプリを出すには、製品版の前にクローズドテストが必要です。このページは、そのテスターを X で集めて、アプリを入れてもらうまでの手順です。〈 〉の部分は自分の値に置き換えてください。</p>
+    <div class="facts">
+      <div class="fact"><b>12人以上</b><span>クローズドテストに参加するテスターの人数</span></div>
+      <div class="fact"><b>14日間</b><span>テスターが続けて参加している必要がある期間</span></div>
+      <div class="fact"><b>15〜20人</b><span>途中で抜ける人を見込んだ、募集人数の目安</span></div>
+    </div>
+  </header>
+
+  <section>
+    <h2><span class="n">00</span>全体の流れ</h2>
+    <p class="desc">テスターが自分で参加できる「Google グループ」を使うと、メールアドレスを一人ずつ聞いて登録する手間がなくなります。</p>
+    <ol class="flow">
+      <li><b>グループを作る</b><span>誰でも参加できる設定に</span></li>
+      <li><b>テストを作る</b><span>テスター欄にグループを登録</span></li>
+      <li><b>審査を待つ</b><span>参加用リンクが出るまで</span></li>
+      <li><b>X で募集</b><span>リンクを2つ貼って投稿</span></li>
+    </ol>
+  </section>
+
+  <section>
+    <h2><span class="n">01</span>Google グループを作る</h2>
+    <p class="desc"><a href="https://groups.google.com/my-groups" target="_blank" rel="noopener">groups.google.com</a> →「グループを作成」。名前とメールアドレスは、例えば「〈アプリ名〉 テスター」「〈アプリ名〉-testers」のようにします。</p>
+    <div class="tbl"><table>
+      <tr><th>設定項目</th><th>選ぶもの</th><th>理由</th></tr>
+      <tr><td>グループを検索できるユーザー</td><td class="set">ウェブ上の全員</td><td>リンクから参加できるように</td></tr>
+      <tr><td>グループに参加できるユーザー</td><td class="set">ウェブ上の誰でも参加できる</td><td>承認の手間をなくす</td></tr>
+      <tr><td>会話を閲覧できるユーザー</td><td class="set">グループのメンバー</td><td>新しい版のお知らせを、テスターだけが読めるように</td></tr>
+      <tr><td>投稿できるユーザー</td><td class="set">グループのオーナー</td><td>スパムや宣伝の投稿を防ぐ</td></tr>
+      <tr><td>メンバーを表示できるユーザー</td><td class="set">グループのオーナー</td><td>テスター同士のメールアドレスが見えないように</td></tr>
+    </table></div>
+    <p style="margin-top:12px">作ったあとのグループのアドレスは <code>〈グループ名〉@googlegroups.com</code>、参加ページは <code>https://groups.google.com/g/〈グループ名〉</code> です。</p>
+  </section>
+
+  <section>
+    <h2><span class="n">02</span>Play Console でクローズドテストを作る</h2>
+    <ol class="steps" data-group="closed">
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">トラックを開く</div><div class="b">「テストとリリース」→「テスト」→「クローズド テスト」→ 最初からある「Alpha」の「管理」。</div></div></li>
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">国と地域を選ぶ</div><div class="b">「国 / 地域」タブ → 日本など、テスターがいる国を追加。</div></div></li>
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">テスターにグループを登録する</div><div class="b">「テスター」タブ →「Google グループ」に <code>〈グループ名〉@googlegroups.com</code> を入力。フィードバックの宛先には公開用のメールアドレスを入れます。</div></div></li>
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">リリースを作って審査に出す</div><div class="b">「新しいリリースを作成」→「ライブラリから追加」で、内部テストに出した AAB を選ぶ → リリースノート →「保存して公開」。初回は Google の審査があり、数時間〜数日かかります。</div></div></li>
+      <li><input type="checkbox" aria-label="完了"><div><div class="t">参加用リンクをコピーする</div><div class="b">審査が通ると、「テスター」タブの下に参加用リンク(<code>https://play.google.com/apps/testing/〈パッケージ名〉</code>)が出ます。</div></div></li>
+    </ol>
+    <div class="callout warn" style="margin-top:12px"><b>投稿は審査が通ってから:</b>先に募集すると、参加してくれた人がインストールできずに待たされてしまいます。グループのリンクと参加用リンクがそろってから投稿してください。</div>
+  </section>
+
+  <section>
+    <h2><span class="n">03</span>X の投稿文</h2>
+    <p class="desc">本文とリプ2つのスレッドにします。本文でアプリと目的を伝え、手順はリプに分けると、1つ1つが X の文字数上限に収まります。</p>
+    <div class="thread">
+      <div class="post">
+        <div class="avatar" aria-hidden="true"><svg viewBox="0 0 28 28"><g fill="#50e3c2"><rect x="6" y="4" width="6" height="2" rx="1"/><rect x="16" y="4" width="6" height="2" rx="1"/><rect x="6" y="22" width="6" height="2" rx="1"/><rect x="16" y="22" width="6" height="2" rx="1"/><rect x="5" y="6" width="2" height="6" rx="1"/><rect x="11" y="6" width="2" height="6" rx="1"/><rect x="21" y="6" width="2" height="6" rx="1"/><rect x="5" y="16" width="2" height="6" rx="1"/><rect x="11" y="16" width="2" height="6" rx="1"/><rect x="21" y="16" width="2" height="6" rx="1"/></g></svg></div>
+        <div>
+          <span class="label">本文</span>
+          <div class="who"><b>〈あなた〉</b></div>
+<pre data-copy>【Androidアプリのテスター募集🙏】
+
+アラーム・タイマー・ポモドーロ・予定・ToDoをひとつにまとめた時間管理アプリを個人開発しました。
+
+Google Playで公開するため、14日間入れたままにしてくれる方を探しています(無料)
+
+参加方法はリプ欄へ👇
+#テスター募集 #個人開発 #Androidアプリ</pre>
+          <div class="tools"><button type="button">コピー</button></div>
+        </div>
+      </div>
+      <div class="post">
+        <div class="avatar" aria-hidden="true"><svg viewBox="0 0 28 28"><circle cx="14" cy="14" r="5" fill="#50e3c2"/></svg></div>
+        <div>
+          <span class="label">リプ 1 / 参加方法</span>
+          <div class="who"><b>〈あなた〉</b></div>
+<pre data-copy>参加方法(Androidのみ・3分)
+
+①Googleグループに参加
+<span class="ph">〈グループのURL〉</span>
+
+②同じGoogleアカウントでこのリンクを開き「テスターになる」
+<span class="ph">〈Playの参加用リンク〉</span>
+
+③「Google Playでダウンロード」からインストール
+
+※14日間はアンインストールしないでください</pre>
+          <div class="tools"><button type="button">コピー</button><span>〈 〉を自分のリンクに差し替え</span></div>
+        </div>
+      </div>
+      <div class="post">
+        <div class="avatar" aria-hidden="true"><svg viewBox="0 0 28 28"><circle cx="14" cy="14" r="5" fill="#50e3c2"/></svg></div>
+        <div>
+          <span class="label">リプ 2 / 注意と感想</span>
+          <div class="who"><b>〈あなた〉</b></div>
+<pre data-copy>・グループに参加すると、メールアドレスが開発者(私)にだけ見えます。公開はしません
+・Googleカレンダー連携(ログイン)はテスト中のため使えません
+・感想や不具合はリプ・DMで教えてもらえるとうれしいです!</pre>
+          <div class="tools"><button type="button">コピー</button></div>
+        </div>
+      </div>
+    </div>
+    <div class="stack" style="margin-top:12px">
+      <div class="callout warn"><b>表現に注意:</b>「〇〇が治る」「症状が良くなる」など、医療的な効果があると受け取られる書き方は避けてください。ストアの審査でも問題になります。</div>
+      <div class="callout ok"><b>メールアドレスのことは先に書く:</b>グループの参加者のアドレスはオーナーから見えます。リプ2のように最初に伝えておくと、参加する側も安心です。</div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="n">04</span>テスターにやってもらうこと</h2>
+    <p class="desc">リプ1の補足です。質問が来たら、この順番で案内してください。</p>
+    <ol class="steps" data-group="tester">
+      <li><input type="checkbox" aria-label="確認"><div><div class="t">Google グループに参加する</div><div class="b">グループのリンクを開いて「グループに参加」。</div></div></li>
+      <li><input type="checkbox" aria-label="確認"><div><div class="t">テスターになる</div><div class="b">参加用リンクを開いて「テスターになる」。<b>グループに参加したのと同じ Google アカウント</b>で開く必要があります。スマホに複数のアカウントがある人は、ここでつまずきやすいです。</div></div></li>
+      <li><input type="checkbox" aria-label="確認"><div><div class="t">インストールする</div><div class="b">同じページの「Google Play でダウンロード」→「インストール」。</div></div></li>
+      <li><input type="checkbox" aria-label="確認"><div><div class="t">14日間そのままにする</div><div class="b">アンインストールしなければ OK です。ときどき開いてもらえると、なお助かります。</div></div></li>
+    </ol>
+  </section>
+
+  <section>
+    <h2><span class="n">05</span>よくある質問</h2>
+    <details class="faq"><summary>「アプリが見つかりません」「このアプリは利用できません」と出る</summary><div>① グループに参加したアカウントと、リンクを開いたブラウザのアカウントが違う。② 参加した直後で、まだ反映されていない。数十分待つか、Chrome 右上のアイコンからアカウントを切り替えて開き直してもらいます。</div></details>
+    <details class="faq"><summary>iPhone でも参加できる?</summary><div>できません。Google Play のテストなので、Android のスマホかタブレットが必要です。</div></details>
+    <details class="faq"><summary>人数が集まらない</summary><div>X で「#テスター募集 相互」と検索すると、同じようにテスターを探している個人開発者が見つかります。お互いのアプリをテストし合う方法がよく使われています。</div></details>
+    <details class="faq"><summary>途中でテスターが抜けたら?</summary><div>12人を下回ると、14日の数え方がやり直しになることがあります。だから最初から15〜20人を目標にします。進み具合は Play Console のダッシュボードで確認できます。</div></details>
+    <details class="faq"><summary>14日たったら?</summary><div>ダッシュボードの「製品版へのアクセスを申請」から申請します。テストでもらった感想と、それを受けて直したことを具体的に書くと通りやすくなります。</div></details>
+  </section>
+
+  <footer>2026年9月の記録です。Google Play の要件は変わることがあるので、実施するときは公式のヘルプもあわせて確認してください。</footer>
+</div>
+
+<script>
+(function(){
+  var KEY='recruit-guide-v1', state={};
+  try{ state=JSON.parse(localStorage.getItem(KEY)||'{}')||{}; }catch(e){}
+  document.querySelectorAll('ol.steps').forEach(function(ol){
+    var g=ol.getAttribute('data-group');
+    ol.querySelectorAll(':scope > li').forEach(function(li,i){
+      var k=g+'-'+i, cb=li.querySelector('input');
+      if(state[k]){cb.checked=true;li.classList.add('checked');}
+      cb.addEventListener('change',function(){li.classList.toggle('checked',cb.checked);state[k]=cb.checked;try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}});
+    });
+  });
+  document.querySelectorAll('.post button').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var pre=btn.closest('.post').querySelector('pre[data-copy]'), text=pre.textContent;
+      function done(){btn.textContent='コピーしました';btn.classList.add('ok');setTimeout(function(){btn.textContent='コピー';btn.classList.remove('ok');},1600);}
+      function fallback(){var r=document.createRange();r.selectNodeContents(pre);var s=getSelection();s.removeAllRanges();s.addRange(r);btn.textContent='選択しました';setTimeout(function(){btn.textContent='コピー';},1600);}
+      try{navigator.clipboard.writeText(text).then(done,fallback);}catch(e){fallback();}
+    });
+  });
+})();
+</script>
+</body>
+</html>
